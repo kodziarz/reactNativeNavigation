@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const xd = async () => {
+            const options = {
+                method: "PUT",
+                body: JSON.stringify({
+                    login: "costam",
+                    password: "nie"
+                }),
+                //mode: "cors",
+                //credentials: "include",
+                headers: {
+                    // Accept: "application/json",
+                    ContentType: "application/json"
+                }
+            }
+
+            let response = await fetch("http://192.168.1.111:3000/user", options)
+            if (!response.ok)
+                return alert(await response.json().message)
+
+            alert("wszystko ok")
+            //this.props.navigation.navigate("s1")
+        }
+        xd()
+    </script>
+</body>
+
+</html>
