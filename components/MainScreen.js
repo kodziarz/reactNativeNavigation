@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, KeyboardAvoidingView, TextInput } from 'react-native';
 import Button from './Button';
+import { registerUser } from './Networking';
 
 export default class MainScreen extends Component {
     constructor(props) {
@@ -12,19 +13,14 @@ export default class MainScreen extends Component {
     }
 
     handleRegisterUser = async () => {
-        const options = {
-            method: "PUT",
-            body: {
-                login: this.state.login,
-                password: this.state.password
-            }
-        }
 
-        let response = await fetch("192.168.1.111:3000/user", options)
-        if (!response.ok)
-            return alert(await response.json().message)
+        let response = await registerUser(this.state.login, this.state.password)
+        if (response.status == 400)
+            return alert("Użytkownik już istnieje")
+        else if (!response.ok)
+            return alert("błąd")
 
-        this.props.navigation.navigate("s1")
+        this.props.navigation.navigate("admin")
     }
 
     render() {
@@ -40,7 +36,7 @@ export default class MainScreen extends Component {
                         onChangeText={(newLogin) => { this.setState({ login: newLogin }) }} />
                     <TextInput
                         placeholder='enter password'
-                        onChangeText={(newPassword) => { this.setState({ login: newPassword }) }} />
+                        onChangeText={(newPassword) => { this.setState({ password: newPassword }) }} />
                     <Button text="Register" onPress={this.handleRegisterUser} />
                 </View>
             </KeyboardAvoidingView>

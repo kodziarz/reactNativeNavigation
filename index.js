@@ -27,15 +27,13 @@ app.put("/user", (req, res) => {
     let newPassword = req.body.password
 
     res.set("Access-Control-Allow-Origin", "*")
-    res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-    res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-    res.set("Content-Type", "text/plain; charset=utf-8")
-    // res.end();
+
     //jeżeli jeszcze takich nie ma
-    if (users.every(({ login, password }) => { return login !== newLogin && password !== newPassword })) {
+    if (users.every(({ login, password }) => { return login !== newLogin && login !== "" && password !== "" })) {
         users.push({
             login: newLogin,
-            password: newPassword
+            password: newPassword,
+            registerDate: Date.now()
         })
         res.status(200).json({ message: "User added" })
         console.log("dodano użytkownika: ", {
@@ -48,26 +46,28 @@ app.put("/user", (req, res) => {
     }
 })
 
-app.post("/user", (req, res) => {
-    let newLogin = req.body.login
-    let newPassword = req.body.password
+app.delete("/user", (req, res) => {
+    let login = req.body.login
+    let password = req.body.password
 
     res.set("Access-Control-Allow-Origin", "*")
-    //jeżeli jeszcze takich nie ma
-    if (users.every(({ login, password }) => { return login !== newLogin && password !== newPassword })) {
-        users.push({
-            login: newLogin,
-            password: newPassword
-        })
-        res.status(200).json({ message: "User added" })
-        console.log("dodano użytkownika: ", {
-            login: newLogin,
-            password: newPassword
-        });
-    } else {
-        res.status(400).json({ message: "User already Exists" })
-        console.log("użytkownik już istniał");
-    }
+
+    if (!users.every(({ checkedLogin, checkedPassword }, i) => {
+        if (checkedLogin === login && checkedPassword === password) {
+            users.splice(i, 1)
+            res.status(200).json({ message: "User succesfully deleted" })
+            console.log("usunięto użytkownika: ", {
+                login: checkedLogin,
+                password: checkedPassword
+            });
+            return false
+        }
+        return true
+    })) res.status(404)//.json({ message: "There is not such a user" })
+})
+
+app.get("/users", (req, res) => {
+    res.status(200).json(users)
 })
 
 app.listen(PORT, function () {
