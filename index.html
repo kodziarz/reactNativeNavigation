@@ -11,21 +11,20 @@
 <body>
     <script>
         const xd = async () => {
+
             const options = {
                 method: "PUT",
                 body: JSON.stringify({
                     login: "costam",
                     password: "nie"
                 }),
-                //mode: "cors",
-                //credentials: "include",
                 headers: {
-                    // Accept: "application/json",
-                    ContentType: "application/json"
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
                 }
             }
 
-            let response = await fetch("http://192.168.1.111:3000/user", options)
+            let response = await fetch("http://192.168.0.73:3000/user/", options)
             if (!response.ok)
                 return alert(await response.json().message)
 
